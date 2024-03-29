@@ -1,4 +1,4 @@
-name: Build K40 Kernel BAALAM
+name: Build K20p Kernel rikka
 
 on:
   workflow_dispatch:
@@ -16,17 +16,17 @@ on:
         description: '内核代码分支/Tag'
         required: false
         type: string
-        default: 'upstream'
+        default: 'rikka-v2'
       config_name:
         description: '内核编译配置文件名'
         required: false
         type: string
-        default: 'vendor/alioth_defconfig'
+        default: 'raphael_defconfig'
       git_url:
         description: '内核仓库地址'
         required: false
         type: string
-        default: 'https://github.com/LowTension/BAALAM_android_kernel_xiaomi_sm8250'
+        default: 'https://github.com/HeliumStudio-Dev/kernel_xiaomi_raphael'
       clang_url:
         description: '编译器下载地址'
         required: false
@@ -37,7 +37,7 @@ jobs:
 
   build_kernel:
 
-    name: Build K40 Kernel
+    name: Build K20p Kernel
 
     runs-on: ubuntu-22.04
 
