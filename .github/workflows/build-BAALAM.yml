@@ -100,24 +100,13 @@ jobs:
           make LLVM=1 LLVM_IAS=1 O=out ARCH=arm64 SUBARCH=arm64 CC=clang LD=ld.lld ${{ inputs.config_name }}
           make -j$(nproc) LLVM=1 LLVM_IAS=1 O=out ARCH=arm64 SUBARCH=arm64 CC=clang LD=ld.lld CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- KBUILD_BUILD_USER=hylab KBUILD_BUILD_HOST=localhost
 
-      - name: Patch Boot
-        run: |
-          chmod +x ./magiskboot
-          unzip boot.zip
-          cp -rf kernel-source/out/arch/arm64/boot/Image ./Image
-          ./magiskboot unpack boot.img
-          rm -rf kernel
-          mv Image kernel
-          ./magiskboot repack boot.img
-          rm -rf ramdisk.cpio boot.img
-          mv kernel Image
 
-      - name: Zip
+      - name: gZip
         run: |
-          zip -r -9 -q -o Kernel.zip new-boot.img Image
+          gzip -c kernel-source/out/arch/arm64/boot/Image > ./Image.gz
 
       - name: Kernel REL
         uses: actions/upload-artifact@main
         with:
           name: ${{ steps.init_config.outputs.processed_name }} KernelSU
-          path: ./Kernel.zip
+          path: ./Image.gz
