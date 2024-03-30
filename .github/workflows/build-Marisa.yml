@@ -77,6 +77,8 @@ jobs:
       - name: Clone Kernel
         run: |
           git clone --depth=2 -b ${{ inputs.kernel_tag }} ${{ inputs.git_url }} kernel-source
+          cd kernel-source
+          git submodule update --init --recursive
           
       - name: Support KernelSU
         if: github.event.inputs.ksu == 'true'
