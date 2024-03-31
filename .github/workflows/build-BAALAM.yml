@@ -85,7 +85,7 @@ jobs:
       
       - name: Clone Kernel
         run: |
-          if [ -n ${{ $inputs.kernel_commit_hash }} ]; then
+          if [ -n ${{ inputs.kernel_commit_hash }} ]; then
           cd kernel-source
           git clone -b ${{ inputs.kernel_tag }} ${{ inputs.git_url }} kernel-source
           git checkout $kernel_commit_hash
