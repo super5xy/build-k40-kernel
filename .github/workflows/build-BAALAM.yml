@@ -7,6 +7,10 @@ on:
         description: '添加KSU支持'
         required: false
         default: 'true'
+      kernelsu_tag:
+        description: 'KSU tag'
+        required: false
+        default: ''
       config_path:
         description: '内核配置文件路径（如果不需要KSU则忽略）/一般默认即可'
         required: false
@@ -27,6 +31,11 @@ on:
         required: false
         type: string
         default: 'https://github.com/LowTension/BAALAM_android_kernel_xiaomi_sm8250'
+      kernel_commit_hash:
+        description: '提交hash'
+        required: false
+        type: string
+        default: ''
       clang_url:
         description: '编译器下载地址'
         required: false
@@ -76,21 +85,22 @@ jobs:
       
       - name: Clone Kernel
         run: |
+          if [ -n ${{ $inputs.kernel_commit_hash }} ]; then
+          cd kernel-source
+          git clone -b ${{ inputs.kernel_tag }} ${{ inputs.git_url }} kernel-source
+          git checkout $kernel_commit_hash
+          else
           git clone --depth=1 -b ${{ inputs.kernel_tag }} ${{ inputs.git_url }} kernel-source
+          fi
           
       - name: Support KernelSU
         if: github.event.inputs.ksu == 'true'
         run: |
-          git clone https://github.com/tiann/KernelSU kernel-source/KernelSU
           cd kernel-source
           echo "CONFIG_KPROBES=y" >> ${{ inputs.config_path }}${{ inputs.config_name }}
           echo "CONFIG_HAVE_KPROBES=y" >> ${{ inputs.config_path }}${{ inputs.config_name }}
           echo "CONFIG_KPROBE_EVENTS=y" >> ${{ inputs.config_path }}${{ inputs.config_name }}
-          git config --global user.email "robot@example.com"
-          git config --global user.name "robot"
-          git add ${{ inputs.config_path }}${{ inputs.config_name }}
-          git commit -m "KUS"
-          ./KernelSU/kernel/setup.sh main
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ inputs.kernelsu_tag }}
 
       - name: Make
         run: |
